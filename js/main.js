@@ -102,7 +102,7 @@ function initPackageButtons(){
   });
 }
 document.addEventListener('DOMContentLoaded',()=>{
-  include('site-header','header.html'); include('site-footer','footer.html');
+  include('site-header','/header.html'); include('site-footer','/footer.html');
   initWhatsAppForm();
   initPackageButtons();
   document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});
