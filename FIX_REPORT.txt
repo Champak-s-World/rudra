@@ -1,0 +1,16 @@
+Rudra Tours priority fixes applied
+==================================
+Final domain used: https://rudratour.in
+WhatsApp enquiry phone: +919580614977
+Unused media files removed: 951
+Approx removed media size: 84.46 MB
+
+Main fixes:
+- Removed unused images and videos detected as not referenced by HTML, CSS or JS.
+- Replaced homepage/test mailto enquiry form with WhatsApp submission.
+- Added or normalized one H1 per HTML page.
+- Added missing meta descriptions.
+- Added canonical tags using https://rudratour.in/.
+- Fixed broken Buddhist Circuit Nalanda image filename/reference.
+- Replaced user-scalable=no viewport with zoom-friendly viewport.
+- Replaced old rudra.tours references with https://rudratour.in/.
