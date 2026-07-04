@@ -1,0 +1,2 @@
+Updated all package pages so page text, cards, hero images, SEO descriptions, JSON-LD, and slideshow images match the page name.
+Generic slideshow was replaced with page-specific dynamic slides.

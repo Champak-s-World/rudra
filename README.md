@@ -32,3 +32,8 @@ Each public page is stored as `folder-name/index.html`. Common files remain at t
 - `/img/...`
 
 Deploy this at the root of `https://rudratour.in/` so root-relative asset and include paths work correctly.
+
+
+## 404 page
+
+A custom `404.html` file is included at the root for GitHub Pages/static hosting. It uses the common header/footer, clean internal links, `noindex, follow`, and WhatsApp enquiry modal support.
