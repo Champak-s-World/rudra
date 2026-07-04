@@ -1,0 +1,8 @@
+HTML pages: 22
+CSS files: 1
+JS files: 1
+Images copied: 87
+Missing local refs: 0
+Old bootstrap/jquery/template dependencies: removed
+WhatsApp form: yes
+Common header/footer: yes
