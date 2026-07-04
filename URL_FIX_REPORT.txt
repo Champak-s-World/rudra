@@ -1,0 +1,7 @@
+Folder URL syntax fixed.
+- header.html added at root.
+- footer.html added at root.
+- All common navigation links use clean folder URLs: /varanasi/, /chardham/, /goa/, etc.
+- Logo points to /.
+- Common images use root paths such as /img/theme-1/logo_dark.png.
+- Slider is now built by js/main.js from page-specific slide data, avoiding old .html slide links.
