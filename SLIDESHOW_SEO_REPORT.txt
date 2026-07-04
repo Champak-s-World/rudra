@@ -1,0 +1,23 @@
+RUDRA TOURS SLIDESHOW + SEO UPDATE REPORT
+Date: 2026-07-04
+
+Added:
+- Top slideshow on every page through header.html.
+- Autoplay, previous/next controls, dots, thumbnail shortcuts, progress bar, pause-on-hover, keyboard support, swipe support, reduced-motion support, gradient overlay, and Ken Burns-style motion.
+- Footer link to https://editor.learnwithchampak.live/contact.
+- Twitter Card tags, robots meta, theme color, image preload, and JSON-LD structured data for TravelAgency/WebPage/Breadcrumb/TouristTrip.
+- Updated sitemap.xml with lastmod, changefreq and priority.
+- Cleaned old CSS/JS/template backup files.
+
+Checks:
+- HTML pages updated: 20
+- Legacy http:// references in HTML/CSS/JS: 0
+- Old Champak contact URL references: 0
+- Missing local refs found: 0
+
+Missing refs list:
+None
+
+Media cleanup:
+- Referenced media kept: 99
+- Unused media removed: 1003
