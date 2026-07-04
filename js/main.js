@@ -1,6 +1,6 @@
 async function include(id, file){
   const el=document.getElementById(id); if(!el) return;
-  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider();}
+  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider(); initWhatsAppForm(); initPackageButtons();}
   catch(e){console.warn('Include failed:',file,e)}
 }
 function initMenu(){
@@ -41,11 +41,69 @@ function initLuxurySlider(){
 }
 function whatsappMessage(form){
   const data=new FormData(form);
-  const lines=['Rudra Tours Enquiry','Name: '+(data.get('name')||''),'Phone: '+(data.get('phone')||''),'Package: '+(data.get('package')||document.title),'Travel Date: '+(data.get('date')||''),'Message: '+(data.get('message')||'')];
+  const lines=[
+    'Rudra Tours Enquiry',
+    'Name: '+(data.get('name')||''),
+    'Phone: '+(data.get('phone')||''),
+    'Package: '+(data.get('package')||document.title),
+    'Travel Date: '+(data.get('date')||''),
+    'Travellers: '+(data.get('travellers')||''),
+    'Message: '+(data.get('message')||'')
+  ].filter(line=>!line.endsWith(': '));
   const url='https://wa.me/919580614977?text='+encodeURIComponent(lines.join('\n'));
-  window.open(url,'_blank'); return false;
+  window.open(url,'_blank','noopener');
+  closeWhatsAppForm();
+  return false;
+}
+function currentPackageName(){
+  const h1=document.querySelector('h1');
+  if(h1&&h1.textContent.trim()) return h1.textContent.trim();
+  return document.title.replace(' | Rudra Tours','').trim() || 'General Tour Enquiry';
+}
+function openWhatsAppForm(packageName){
+  const modal=document.getElementById('whatsappModal');
+  if(!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  const select=modal.querySelector('select[name="package"]');
+  const name=packageName||currentPackageName();
+  if(select){
+    const found=[...select.options].find(o=>o.value.toLowerCase()===name.toLowerCase()||name.toLowerCase().includes(o.value.toLowerCase().replace(' package','')));
+    if(found) select.value=found.value; else select.value='General Tour Enquiry';
+  }
+  const first=modal.querySelector('input[name="name"]');
+  setTimeout(()=>first&&first.focus(),60);
+}
+function closeWhatsAppForm(){
+  const modal=document.getElementById('whatsappModal');
+  if(!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('modal-open');
+}
+function initWhatsAppForm(){
+  document.querySelectorAll('[data-open-whatsapp-form]').forEach(btn=>{
+    if(btn.dataset.ready) return;
+    btn.dataset.ready='1';
+    btn.addEventListener('click',e=>{e.preventDefault();openWhatsAppForm(btn.getAttribute('data-package')||'');});
+  });
+  document.querySelectorAll('[data-close-whatsapp-form]').forEach(btn=>{
+    if(btn.dataset.ready) return;
+    btn.dataset.ready='1';
+    btn.addEventListener('click',closeWhatsAppForm);
+  });
+}
+function initPackageButtons(){
+  document.querySelectorAll('[data-package]').forEach(a=>{
+    if(a.dataset.packageReady) return;
+    a.dataset.packageReady='1';
+    a.addEventListener('click',e=>{e.preventDefault();openWhatsAppForm(a.getAttribute('data-package')||'');});
+  });
 }
 document.addEventListener('DOMContentLoaded',()=>{
   include('site-header','header.html'); include('site-footer','footer.html');
-  document.querySelectorAll('[data-package]').forEach(a=>{a.addEventListener('click',()=>{const pkg=a.getAttribute('data-package');a.href='https://wa.me/919580614977?text='+encodeURIComponent('I want to know more about '+pkg+' from Rudra Tours.');});});
+  initWhatsAppForm();
+  initPackageButtons();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});
 });
