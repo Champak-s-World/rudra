@@ -1,6 +1,7 @@
 async function include(id, file){
   const el=document.getElementById(id); if(!el) return;
-  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider(); initWhatsAppForm(); initPackageButtons();}
+  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider(); initWhatsAppForm(); initPackageButtons(); initPwaInstallButton();
+  if(new URLSearchParams(location.search).get('enquiry')==='whatsapp') setTimeout(()=>openWhatsAppForm('General Tour Enquiry'),500);}
   catch(e){console.warn('Include failed:',file,e)}
 }
 function initMenu(){
@@ -128,9 +129,60 @@ function initPackageButtons(){
     a.addEventListener('click',e=>{e.preventDefault();openWhatsAppForm(a.getAttribute('data-package')||'');});
   });
 }
+
+let deferredPwaInstallPrompt=null;
+function isPwaInstalled(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function setInstallButtonsVisible(visible){
+  document.querySelectorAll('[data-pwa-install]').forEach(btn=>{
+    btn.hidden=!visible;
+    btn.classList.toggle('is-visible', !!visible);
+  });
+}
+function initPwaInstallButton(){
+  const buttons=[...document.querySelectorAll('[data-pwa-install]')];
+  if(!buttons.length) return;
+  if(isPwaInstalled()) { setInstallButtonsVisible(false); return; }
+  setInstallButtonsVisible(!!deferredPwaInstallPrompt);
+  buttons.forEach(btn=>{
+    if(btn.dataset.installReady) return;
+    btn.dataset.installReady='1';
+    btn.addEventListener('click', async ()=>{
+      if(!deferredPwaInstallPrompt){
+        alert('Install is available after the browser confirms this site is installable. On mobile Chrome, you can also use the browser menu and choose “Add to Home screen”.');
+        return;
+      }
+      deferredPwaInstallPrompt.prompt();
+      try{ await deferredPwaInstallPrompt.userChoice; }catch(e){}
+      deferredPwaInstallPrompt=null;
+      setInstallButtonsVisible(false);
+    });
+  });
+}
+window.addEventListener('beforeinstallprompt', event=>{
+  event.preventDefault();
+  deferredPwaInstallPrompt=event;
+  initPwaInstallButton();
+  setInstallButtonsVisible(true);
+});
+window.addEventListener('appinstalled', ()=>{
+  deferredPwaInstallPrompt=null;
+  setInstallButtonsVisible(false);
+});
+
 document.addEventListener('DOMContentLoaded',()=>{
+  registerServiceWorker();
   include('site-header','/header.html'); include('site-footer','/footer.html');
   initWhatsAppForm();
   initPackageButtons();
   document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});
 });
+
+function registerServiceWorker(){
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+}

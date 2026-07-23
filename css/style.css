@@ -100,3 +100,34 @@ body.modal-open{overflow:hidden}
 
 /* Content match improvements */
 .eyebrow{color:var(--primary-dark);font-weight:900;letter-spacing:1.4px;text-transform:uppercase;font-size:13px}.itinerary-list{counter-reset:item;display:grid;gap:16px;max-width:900px;margin:0 auto;padding:0;list-style:none}.itinerary-list li{background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);border-radius:18px;padding:20px 22px;color:var(--text)}.itinerary-list li span{display:inline-flex;margin-right:10px;background:var(--primary);color:#fff;border-radius:999px;padding:4px 10px;font-weight:900;font-size:13px}.faq-box{max-width:900px;margin:0 auto;display:grid;gap:12px}.faq-box details{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:0 8px 25px rgba(16,35,47,.06)}.faq-box summary{cursor:pointer;font-weight:900;color:var(--dark)}.faq-box p{margin-bottom:0;color:var(--muted)}
+
+
+/* PWA install button */
+.install-app-link{
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border-radius:999px;
+  padding:5px 11px;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+.install-app-link:hover,.install-app-link:focus{background:#00bcd4;color:#fff;outline:2px solid rgba(255,255,255,.35)}
+.pwa-install-float{
+  position:fixed;
+  left:18px;
+  bottom:18px;
+  z-index:61;
+  border:0;
+  border-radius:999px;
+  padding:13px 18px;
+  background:#10232f;
+  color:#fff;
+  font-weight:900;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+}
+.pwa-install-float:hover,.pwa-install-float:focus{background:#00bcd4;outline:3px solid rgba(0,188,212,.25)}
+[data-pwa-install][hidden]{display:none!important}
+@media (max-width:640px){.pwa-install-float{left:12px;bottom:12px;padding:12px 15px}.sticky-actions{bottom:72px}}

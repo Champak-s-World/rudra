@@ -37,3 +37,13 @@ Deploy this at the root of `https://rudratour.in/` so root-relative asset and in
 ## 404 page
 
 A custom `404.html` file is included at the root for GitHub Pages/static hosting. It uses the common header/footer, clean internal links, `noindex, follow`, and WhatsApp enquiry modal support.
+
+
+## PWA update
+
+This version includes `manifest.webmanifest`, `sw.js`, offline support, installable icons, and service worker registration through `js/main.js`. Test through HTTPS hosting such as GitHub Pages, Cloudflare Pages, Netlify or cPanel with SSL.
+
+
+## Install button update
+
+A browser-controlled PWA install button has been added in the topbar and as a floating button. It appears only after the `beforeinstallprompt` event is available and hides after installation.
