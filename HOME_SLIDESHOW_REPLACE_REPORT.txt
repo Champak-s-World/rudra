@@ -1,0 +1,7 @@
+Home slideshow replacement completed.
+
+Changes:
+- The common header/lux slideshow is hidden only on the home page using a home-only body class.
+- The all-tours slideshow was moved to the top of the home page, immediately after the common header area.
+- Other package pages were not edited, so their destination slideshows remain unchanged.
+- The old home hero was converted into a short introduction below the all-tours slideshow.
