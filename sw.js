@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rudra-tours-pwa-v1';
+const CACHE_NAME = 'rudra-tours-pwa-v2';
 const OFFLINE_URL = '/offline.html';
 const CORE_ASSETS = [
   "/",

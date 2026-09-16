@@ -1,6 +1,6 @@
 async function include(id, file){
   const el=document.getElementById(id); if(!el) return;
-  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider(); initWhatsAppForm(); initPackageButtons(); initPwaInstallButton();
+  try{const r=await fetch(file,{cache:'no-cache'}); el.innerHTML=await r.text(); initMenu(); initLuxurySlider(); initWhatsAppForm(); initPackageButtons(); initPwaInstallButton(); initBackToTop();
   if(new URLSearchParams(location.search).get('enquiry')==='whatsapp') setTimeout(()=>openWhatsAppForm('General Tour Enquiry'),500);}
   catch(e){console.warn('Include failed:',file,e)}
 }
@@ -84,6 +84,45 @@ function initHomeTourSlideshow(){
   paint(); restart();
 }
 
+
+function initHomePackageScroll(){
+  document.querySelectorAll('a[href^="#package-"]').forEach(link=>{
+    if(link.dataset.scrollReady) return;
+    link.dataset.scrollReady='1';
+    link.addEventListener('click', e=>{
+      const id=decodeURIComponent(link.getAttribute('href').slice(1));
+      const target=document.getElementById(id);
+      if(!target) return;
+      e.preventDefault();
+      history.replaceState(null,'','#'+id);
+      target.scrollIntoView({behavior:'smooth',block:'center'});
+      target.classList.remove('package-long-highlight');
+      void target.offsetWidth;
+      target.classList.add('package-long-highlight');
+      clearTimeout(target._rudraHighlightTimer);
+      target._rudraHighlightTimer=setTimeout(()=>target.classList.remove('package-long-highlight'),9500);
+    });
+  });
+}
+function initBackToTop(){
+  const buttons=[...document.querySelectorAll('[data-back-to-top]')];
+  if(!buttons.length) return;
+  const paint=()=>{
+    const show=window.scrollY>420;
+    buttons.forEach(btn=>{btn.hidden=!show; btn.classList.toggle('is-visible',show);});
+  };
+  buttons.forEach(btn=>{
+    if(btn.dataset.ready) return;
+    btn.dataset.ready='1';
+    btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  });
+  if(!window._rudraBackToTopReady){
+    window._rudraBackToTopReady=true;
+    window.addEventListener('scroll',paint,{passive:true});
+  }
+  paint();
+}
+
 function whatsappMessage(form){
   const data=new FormData(form); const lines=['Rudra Tours Enquiry','Name: '+(data.get('name')||''),'Phone: '+(data.get('phone')||''),'Package: '+(data.get('package')||document.title),'Travel Date: '+(data.get('date')||''),'Travellers: '+(data.get('travellers')||''),'Message: '+(data.get('message')||'')].filter(line=>!line.endsWith(': '));
   const url='https://wa.me/919580614977?text='+encodeURIComponent(lines.join('\n')); window.open(url,'_blank','noopener'); closeWhatsAppForm(); return false;
@@ -100,5 +139,5 @@ function initPackageButtons(){document.querySelectorAll('[data-package]').forEac
 let deferredPwaInstallPrompt=null; function isPwaInstalled(){return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;} function setInstallButtonsVisible(visible){document.querySelectorAll('[data-pwa-install]').forEach(btn=>{btn.hidden=!visible;btn.classList.toggle('is-visible', !!visible);});}
 function initPwaInstallButton(){const buttons=[...document.querySelectorAll('[data-pwa-install]')]; if(!buttons.length) return; if(isPwaInstalled()) { setInstallButtonsVisible(false); return; } setInstallButtonsVisible(!!deferredPwaInstallPrompt); buttons.forEach(btn=>{if(btn.dataset.installReady) return; btn.dataset.installReady='1'; btn.addEventListener('click', async ()=>{if(!deferredPwaInstallPrompt){alert('Install is available after the browser confirms this site is installable. On mobile Chrome, you can also use the browser menu and choose “Add to Home screen”.'); return;} deferredPwaInstallPrompt.prompt(); try{ await deferredPwaInstallPrompt.userChoice; }catch(e){} deferredPwaInstallPrompt=null; setInstallButtonsVisible(false);});});}
 window.addEventListener('beforeinstallprompt', event=>{event.preventDefault(); deferredPwaInstallPrompt=event; initPwaInstallButton(); setInstallButtonsVisible(true);}); window.addEventListener('appinstalled', ()=>{deferredPwaInstallPrompt=null; setInstallButtonsVisible(false);});
-document.addEventListener('DOMContentLoaded',()=>{registerServiceWorker(); include('site-header','/header.html'); include('site-footer','/footer.html'); initHomeTourSlideshow(); initWhatsAppForm(); initPackageButtons(); document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});});
+document.addEventListener('DOMContentLoaded',()=>{registerServiceWorker(); include('site-header','/header.html'); include('site-footer','/footer.html'); initHomeTourSlideshow(); initHomePackageScroll(); initWhatsAppForm(); initPackageButtons(); initBackToTop(); document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});});
 function registerServiceWorker(){if ('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/sw.js').catch(() => {});});}}
