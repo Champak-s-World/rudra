@@ -1,0 +1,1 @@
+Home page Open Package buttons now scroll to matching package cards on the home page. Other pages were not changed.
