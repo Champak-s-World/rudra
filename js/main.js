@@ -34,6 +34,56 @@ function initLuxurySlider(){
   slider.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(index-1,true); if(e.key==='ArrowRight')go(index+1,true)}); slider.tabIndex=0;
   slider.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX},{passive:true}); slider.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-startX;if(Math.abs(dx)>45)go(index+(dx<0?1:-1),true)},{passive:true}); paint(); restart();
 }
+
+function initHomeTourSlideshow(){
+  const slider=document.querySelector('[data-home-tour-slideshow]');
+  if(!slider || slider.dataset.ready) return;
+  slider.dataset.ready='1';
+  const slides=[...slider.querySelectorAll('.home-tour-slide')];
+  const buttonsBox=slider.querySelector('[data-home-tour-buttons]');
+  const progress=slider.querySelector('[data-home-tour-progress]');
+  let index=0; let timer=null; const delay=6500;
+  slides.forEach((slide,i)=>{
+    slide.setAttribute('role','group');
+    slide.setAttribute('aria-roledescription','tour slide');
+    slide.setAttribute('aria-label',`${i+1} of ${slides.length}: ${slide.dataset.title||'Tour package'}`);
+    if(buttonsBox){
+      const b=document.createElement('button');
+      b.type='button';
+      b.textContent=slide.dataset.title || `Tour ${i+1}`;
+      b.addEventListener('click',()=>go(i,true));
+      buttonsBox.appendChild(b);
+    }
+  });
+  const nav=[...slider.querySelectorAll('[data-home-tour-buttons] button')];
+  function restartProgress(){
+    if(!progress) return;
+    progress.classList.remove('run');
+    progress.style.animation='none';
+    progress.offsetHeight;
+    progress.style.animation='';
+    progress.classList.add('run');
+  }
+  function paint(){
+    slides.forEach((s,i)=>s.classList.toggle('is-active',i===index));
+    nav.forEach((b,i)=>b.classList.toggle('is-active',i===index));
+    restartProgress();
+  }
+  function go(i,user=false){
+    index=(i+slides.length)%slides.length;
+    paint();
+    if(user) restart();
+  }
+  function restart(){clearInterval(timer); timer=setInterval(()=>go(index+1),delay);}
+  slider.querySelector('[data-home-tour-prev]')?.addEventListener('click',()=>go(index-1,true));
+  slider.querySelector('[data-home-tour-next]')?.addEventListener('click',()=>go(index+1,true));
+  slider.addEventListener('mouseenter',()=>clearInterval(timer));
+  slider.addEventListener('mouseleave',restart);
+  slider.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(index-1,true); if(e.key==='ArrowRight')go(index+1,true);});
+  slider.tabIndex=0;
+  paint(); restart();
+}
+
 function whatsappMessage(form){
   const data=new FormData(form); const lines=['Rudra Tours Enquiry','Name: '+(data.get('name')||''),'Phone: '+(data.get('phone')||''),'Package: '+(data.get('package')||document.title),'Travel Date: '+(data.get('date')||''),'Travellers: '+(data.get('travellers')||''),'Message: '+(data.get('message')||'')].filter(line=>!line.endsWith(': '));
   const url='https://wa.me/919580614977?text='+encodeURIComponent(lines.join('\n')); window.open(url,'_blank','noopener'); closeWhatsAppForm(); return false;
@@ -50,5 +100,5 @@ function initPackageButtons(){document.querySelectorAll('[data-package]').forEac
 let deferredPwaInstallPrompt=null; function isPwaInstalled(){return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;} function setInstallButtonsVisible(visible){document.querySelectorAll('[data-pwa-install]').forEach(btn=>{btn.hidden=!visible;btn.classList.toggle('is-visible', !!visible);});}
 function initPwaInstallButton(){const buttons=[...document.querySelectorAll('[data-pwa-install]')]; if(!buttons.length) return; if(isPwaInstalled()) { setInstallButtonsVisible(false); return; } setInstallButtonsVisible(!!deferredPwaInstallPrompt); buttons.forEach(btn=>{if(btn.dataset.installReady) return; btn.dataset.installReady='1'; btn.addEventListener('click', async ()=>{if(!deferredPwaInstallPrompt){alert('Install is available after the browser confirms this site is installable. On mobile Chrome, you can also use the browser menu and choose “Add to Home screen”.'); return;} deferredPwaInstallPrompt.prompt(); try{ await deferredPwaInstallPrompt.userChoice; }catch(e){} deferredPwaInstallPrompt=null; setInstallButtonsVisible(false);});});}
 window.addEventListener('beforeinstallprompt', event=>{event.preventDefault(); deferredPwaInstallPrompt=event; initPwaInstallButton(); setInstallButtonsVisible(true);}); window.addEventListener('appinstalled', ()=>{deferredPwaInstallPrompt=null; setInstallButtonsVisible(false);});
-document.addEventListener('DOMContentLoaded',()=>{registerServiceWorker(); include('site-header','/header.html'); include('site-footer','/footer.html'); initWhatsAppForm(); initPackageButtons(); document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});});
+document.addEventListener('DOMContentLoaded',()=>{registerServiceWorker(); include('site-header','/header.html'); include('site-footer','/footer.html'); initHomeTourSlideshow(); initWhatsAppForm(); initPackageButtons(); document.addEventListener('keydown',e=>{if(e.key==='Escape') closeWhatsAppForm();});});
 function registerServiceWorker(){if ('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/sw.js').catch(() => {});});}}
